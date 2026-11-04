@@ -7,11 +7,6 @@ Se cambiaron algunos nombres de tablas o sentencias con el fin de alienear
 con el diseño personal del estudiante. 
 */
 
-
---==CREAMOS LA BASE DE DATOS Y LA PONEMOS EN USO==--
-
-CREATE DATABASE Ventas_Tech_DB; 
-
 USE VENTAS_TECH_DB;
 
 /*
@@ -39,7 +34,7 @@ CREATE TABLE Categorias(
 CREATE TABLE Clientes(
 	IDCliente INT PRIMARY KEY,
 	NombreCliente NVARCHAR(50) NOT NULL,
-	Email NVARCHAR(200),
+	Email NVARCHAR(200) UNIQUE,
 	Ciudad NVARCHAR(50),
 	FechaRegistro DATE NOT NULL);
 
@@ -56,7 +51,7 @@ CREATE TABLE Ventas(
 	IDCliente INT FOREIGN KEY REFERENCES DBO.Clientes(IDCliente),
 	IDProducto INT FOREIGN KEY REFERENCES DBO.Productos(IDProducto),
 	Cantidad INT NOT NULL,
-	PrecioUnitario DECIMAL(10,2),
+	PrecioUnitario DECIMAL(10,2) NOT NULL,
 	FechaVenta DATE NOT NULL);
 
 
