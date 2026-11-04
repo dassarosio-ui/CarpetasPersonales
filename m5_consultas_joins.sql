@@ -1,5 +1,5 @@
 /*
-===PRE-ENTREGA 5===
+===PRE-ENTREGA V===
 
 Ponemos en uso nuestra base de datos dado por el curso:
 */
@@ -30,8 +30,8 @@ FROM DBO.Ventas V
  INNER JOIN DBO.Categorias CAT
 	ON CAT.IDCategoria = P.IDCategoria
 
-/*HALLAZGO: 1) El %70 de los clientes compra dos o más productos.
-			2) Solo el %30 de los clientes supero el gasto de $450. 
+/*HALLAZGO: 1) 7 de 10 de las compras fueron de dos o más productos.
+			2) Solo el %30 de las compras supero el gasto de $450. 
 			3) El %20 de las compras son de Buenos Aires.*/
 /*
 ==Consulta 2 — Clientes sin ventas==
@@ -52,7 +52,7 @@ FROM DBO.Clientes C
 	ON v.IDCliente = c.IDCliente
 WHERE V.IDVenta IS NULL;
 
---HALLAZGO: El %100 de los clientes registrados realizaron compras. 
+--HALLAZGO: 5 de 5 de los clientes registrados realizaron compras, no deberia haber preocupación por clientes inactivos. 
 
 /*
 ==Consulta 3 — Productos sin ventas== 
@@ -73,7 +73,7 @@ FROM DBO.Productos P
 		ON CAT.IDCategoria = P.IDCategoria
 WHERE V.IDVenta IS NULL;
 
---HALLAZGO: No presentamos productos sin ventas.
+--HALLAZGO: 6 de 6 productos lograron ventas este mes, dando así un %100 de efectividad de actividad de productos.
 
 /*
 ==Consulta 4 — Consolidado==
@@ -99,3 +99,4 @@ GROUP BY Canal;
 /*HALLAZGO: Desde que se lanzo la página (fecha supuesta). 
 El canal Online generó 2.824, cerca del 44% de la facturación del período.
 Mientras que el canal Presencial, que operó solo hasta el 10/03, facturó 3.620.*/
+
