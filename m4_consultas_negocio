@@ -24,7 +24,7 @@ SELECT
 	CAST(SUM(PrecioUnitario*Cantidad) AS INT) AS Total_Facturado,
 	COUNT(*) AS Cantidad_de_pedidos,
 	SUM (Cantidad) AS Total_productos_vendidos, --Lo voy a utilizar para analizar al final.
-	CAST (AVG(PrecioUnitario) AS INT) AS Ticket_promedio
+	CAST (SUM(PrecioUnitario*Cantidad) / COUNT(*)) AS INT) AS Ticket_promedio
 FROM 
 	DBO.Ventas
 GROUP BY
@@ -57,7 +57,7 @@ Usá GROUP BY id_cliente y HAVING COUNT(*) > 1.
 
 SELECT 
 	IDCliente AS ID_del_Cliente,
-	SUM(Cantidad) AS Cuanto_compro,
+	COUNT(*) AS Cantidad_Pedidos,
 	CAST(SUM(PrecioUnitario*Cantidad) AS INT) AS Total_Gastado
 FROM 
 	DBO.Ventas
@@ -71,7 +71,8 @@ Meses por encima/por debajo del promedio: Total facturado por mes,
 con una columna adicional que etiquete con CASE WHEN si ese mes 
 quedó 'Por encima' o 'Por debajo' del promedio mensual general.
 
-==Respuesta==*/
+==Respuesta==
+Primera entrega, respuesta no ejecutada correctamente
 
 SELECT
 	MONTH(FechaVenta) AS Mes,
@@ -85,12 +86,37 @@ FROM
 GROUP BY
 	MONTH(FechaVenta)
 ORDER BY 
-	Total_Facturado DESC;
+	Total_Facturado DESC; */
+
+--Respuesta correjida.
+
+--Paso 1: Creamos una tabla temporal para hacer una consulta
+WITH Facturacion_Mensual AS 
+	(SELECT
+		MONTH(FechaVenta) Mes_de_venta,
+		SUM(PrecioUnitario*Cantidad) Total_de_venta_x_mes 
+	FROM DBO.Ventas
+	GROUP BY MONTH(FechaVenta)) 
+
+--Paso 2: Generamos la consulta con la plata creada
+SELECT
+	Mes_de_venta,
+	CASE
+		WHEN Total_de_venta_x_mes < (SELECT AVG(Total_de_venta_x_mes)FROM Facturacion_Mensual) THEN 'Por debajo' --De esta manera es mas legible y ejecuta mejor. 
+		WHEN Total_de_venta_x_mes > (SELECT AVG(Total_de_venta_x_mes)FROM Facturacion_Mensual) THEN 'Por encima'
+		-- CUANDO Total_de_venta_x_mes MAYOR A (SELECCIONA PROMEDIO(Total_de_venta_x_mes))
+	ELSE 'Igual_al_promedio' --Faltaba el ELSE para devolver lo que no concidiera con ninguno de los dos.
+	END AS Promedio_de_ventas,
+	CAST(Total_de_venta_x_mes  AS INT) AS Total_facturado_x_mes 
+FROM Facturacion_Mensual
+ORDER BY 
+    Total_facturado_x_mes DESC;
+
 
 /*
 ===BLOQUE CIERRE===
 Observaciones:
-	1) Si bien el producto 2 es el que menos facturo, hay que tener en cuenta que esl el producto
+	1) Si bien el producto 2 es el que menos facturo, hay que tener en cuenta que es el producto
 	con mayor rotacion dentro del TOP 5.
 	2) El cliente 1° y 2° del TOP 5 concentran más del %70 de la facturación.
 	3) Los productos de ID 1 y 3 generan el %76 de las ganancias. 
